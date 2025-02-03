@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Game</title>
+
+    <link rel="stylesheet" href="styles.css">
+    <script src="scripts/game.js"></script>
+</head>
+<body onload="startGame()">
+    <div class="game-container">
+        <canvas id="gameCanvas" width="720" height="480"></canvas>
+        <div class="instructions">
+            <h2>Game Instructions</h2>
+            <table>
+                <tr>
+                    <td class="icon">🚀</td>
+                    <td>Use the Arrow Keys to move the rocket</td>
+                </tr>
+                <tr>
+                    <td class="icon">🔫</td>
+                    <td>Fire shots with Spacebar</td>
+                </tr>
+                <tr>
+                    <td class="icon">💥</td>
+                    <td>Avoid collisions with UFOs</td>
+                </tr>
+                <tr>
+                    <td class="icon">🎯</td>
+                    <td>Hit UFOs to score points</td>
+                </tr>
+                <tr>
+                    <td class="icon">❌</td>
+                    <td>If a UFO passes, you lose a life!</td>
+                </tr>
+                <tr>
+                    <td class="icon">⏩</td>
+                    <td>The game gets faster the longer you survive</td>
+                </tr>
+                <tr>
+                    <td class="icon">💀</td>
+                    <td>You lose if get hit or there are no points left</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
