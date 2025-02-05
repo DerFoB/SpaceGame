@@ -1,3 +1,7 @@
+import { NormalUfo, FastUfo } from './objects/enemies.js';
+import { Rocket } from './objects/player.js';
+import { Shot } from './objects/shots.js';
+
 /// Settings
 const rocketSpeed = 12;
 let lives = 5;
@@ -8,98 +12,6 @@ const minSpawnRate = 1000;
 
 const shotSpeed =  15;
 const shotCooldown = 300;
-
-
-/// Classes
-class Rocket {
-    constructor(x, y, width, height, imgSrc, speed) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.img = new Image();
-        this.img.src = imgSrc;
-        this.speed = speed;
-    }
-
-    moveUp() {
-        this.y -= this.speed;
-    }
-
-    moveDown() {
-        this.y += this.speed;
-    }
-
-    moveLeft() {
-        this.x -= (0.7 * this.speed);
-    }
-
-    moveRight() {
-        this.x += this.speed;
-    }
-
-    draw(ctx) {
-        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-    }
-}
-
-
-
-class Enemy {
-    constructor(x, y, width, height, imgSrc, points, speed) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.img = new Image();
-        this.img.src = imgSrc;
-        this.points = points;
-        this.speed = speed;
-    }
-
-    move() {
-        this.x -= this.speed;
-    }
-
-    draw(ctx) {
-        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-    }
-
-    speedChange(speedChange) {
-        this.speed += speedChange;
-    }
-}
-
-class NormalUfo extends Enemy {
-    constructor(x, y) {
-        super(x, y, 100, 40, 'img/enemies/normalUFo.png', 1, 5);
-    }
-}
-
-class FastUfo extends Enemy {
-    constructor(x, y) {
-        super(x, y, 80, 30, 'img/enemies/fastUfo.png', 2, 8);
-    }
-}
-
-class Shot {
-    constructor(x, y, width, height, imgSrc) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.img = new Image();
-        this.img.src = imgSrc;
-    }
-
-    move(speed) {
-        this.x += speed;
-    }
-
-    draw(ctx) {
-        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-    }
-}
 
 
 /// Initializes
@@ -333,3 +245,5 @@ function draw(){ //redraw Canvas
 
     requestAnimationFrame(draw);
 }
+
+export { startGame };

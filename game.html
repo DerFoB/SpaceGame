@@ -6,9 +6,8 @@
     <title>Space Game</title>
 
     <link rel="stylesheet" href="styles.css">
-    <script src="scripts/game.js"></script>
 </head>
-<body onload="startGame()">
+<body>
     <div class="game-container">
         <canvas id="gameCanvas" width="720" height="480"></canvas>
         <div class="instructions">
@@ -46,4 +45,12 @@
         </div>
     </div>
 </body>
+<script type="module" src="scripts/game.js"></script>
+<script type="module">
+    import { startGame } from './scripts/game.js';
+
+    window.onload = () => {
+        startGame();
+    };
+</script>
 </html>
