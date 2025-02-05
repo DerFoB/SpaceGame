@@ -1,19 +1,13 @@
 /// Settings
-let rocketSpeed = 12;
+const rocketSpeed = 12;
 let lives = 5;
 
-let ufoSpeed = 8;
-let ufoSpeedChange = 0.2;
+const ufoSpeedChange = 0.2;
 let ufoSpawnRate = 5000;
-let minSpawnRate = 1000;
+const minSpawnRate = 1000;
 
-let shotSpeed =  15;
-let shotCooldown = 300;
-
-let ufoPoints = 1;
-let ufoBigPoints = 5;
-
-
+const shotSpeed =  15;
+const shotCooldown = 300;
 
 
 /// Classes
@@ -49,7 +43,9 @@ class Rocket {
     }
 }
 
-class Ufo {
+
+
+class Enemy {
     constructor(x, y, width, height, imgSrc, points, speed) {
         this.x = x;
         this.y = y;
@@ -69,8 +65,20 @@ class Ufo {
         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
     }
 
-    recolor(color) {
-        this.img = colorizeImage(this.img, color);
+    speedChange(speedChange) {
+        this.speed += speedChange;
+    }
+}
+
+class NormalUfo extends Enemy {
+    constructor(x, y) {
+        super(x, y, 100, 40, 'img/enemies/normalUFo.png', 1, 5);
+    }
+}
+
+class FastUfo extends Enemy {
+    constructor(x, y) {
+        super(x, y, 80, 30, 'img/enemies/fastUfo.png', 2, 8);
     }
 }
 
@@ -203,7 +211,7 @@ function checkCollision(){
                 }, 70);
 
                 score += ufo.points;
-                ufoSpeed += ufoSpeedChange;
+                ufo.speedChange(ufoSpeedChange);
             }
             if(shot.x > canvas.width){
                 shots = shots.filter(u => u != shot);
@@ -227,11 +235,13 @@ function createShot(){
 let ufoSpwanCount = 1;
 
 function spawnUfos(){
+    const randomHeight = Math.random() * (canvas.height - 50) + 5;
+
     if(ufoSpwanCount % 5 === 0){
-        createUfo(ufoBigPoints, 'img/ufo2.png', ufoSpeed * 1.5);
+        createUfo(new FastUfo(canvas.width, randomHeight));
         ufoSpwanCount = 1;
     } else {
-        createUfo(ufoPoints, 'img/ufo1.png', ufoSpeed);
+        createUfo(new NormalUfo(canvas.width, randomHeight));
     }
 
     let nextSpawn;
@@ -247,16 +257,18 @@ function spawnUfos(){
     setTimeout(spawnUfos, nextSpawn); 
 }
 
-function createUfo(points, img, speed){
-    let ufo = new Ufo(canvas.width,
-        Math.random() * (canvas.height - 50) + 5, 
-        100, 40, img, points, speed);
+function createUfo(ufo){
     ufos.push(ufo);
     ufoSpwanCount++;
 }
 
 
 /// Visuals
+function wobbleObject(object) {
+    
+}
+
+/// Basics
 function update(){
     // Button presses
     if(KEY_UP){
