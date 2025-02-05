@@ -1,3 +1,4 @@
+import { Background } from './objects/background.js';
 import { NormalUfo, FastUfo } from './objects/enemies.js';
 import { Rocket } from './objects/player.js';
 import { Shot } from './objects/shots.js';
@@ -27,11 +28,11 @@ let lastShotTime = 0;
 let canvas;
 let ctx;
 let updateInterval;
-let backgroundImage = new Image();
 
 let ufos = [];
 let shots = [];
 let rocket;
+let background;
 
 document.onkeydown = function(e) {  // Button pressed
     if (e.key === " "){ // Space
@@ -175,10 +176,7 @@ function createUfo(ufo){
 }
 
 
-/// Visuals
-function wobbleObject(object) {
-    
-}
+
 
 /// Basics
 function update(){
@@ -221,13 +219,13 @@ function update(){
 }
 
 function loadImages(){
-    backgroundImage.src = 'img/spaceBackground.jpg'
+    background = new Background('img/spaceBackground.jpg')
     rocket = new Rocket(40, 200, 100, 50, 'img/rocket.png', rocketSpeed);
 }
 
 function draw(){ //redraw Canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+    background.draw(ctx, canvas);
     rocket.draw(ctx);
 
     ufos.forEach(function(ufo){
