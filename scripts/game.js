@@ -1,7 +1,8 @@
-import { Background } from './objects/background.js';
+import { MovingBackground } from './objects/background.js';
 import { NormalUfo, FastUfo } from './objects/enemies.js';
 import { Rocket } from './objects/player.js';
 import { Shot } from './objects/shots.js';
+import { keyState } from './functionality/inputHandler.js';
 
 /// Settings
 const rocketSpeed = 12;
@@ -18,12 +19,6 @@ const shotCooldown = 300;
 /// Initializes
 let score = 0;
 
-let KEY_SPACE = false;
-let KEY_UP = false;
-let KEY_DOWN = false;
-let KEY_LEFT = false;
-let KEY_RIGHT = false;
-
 let lastShotTime = 0;
 let canvas;
 let ctx;
@@ -33,41 +28,6 @@ let ufos = [];
 let shots = [];
 let rocket;
 let background;
-
-document.onkeydown = function(e) {  // Button pressed
-    if (e.key === " "){ // Space
-        KEY_SPACE = true;
-    }
-    if (e.key === "ArrowUp"){ 
-        KEY_UP = true;
-    }
-    if (e.key === "ArrowDown"){ 
-        KEY_DOWN = true;
-    }
-    if (e.key === "ArrowLeft"){
-        KEY_LEFT = true;
-    }
-    if (e.key === "ArrowRight"){ 
-        KEY_RIGHT = true;
-    }
-}
-document.onkeyup = function(e) {    // Button released
-    if (e.key === " "){
-        KEY_SPACE = false;
-    }
-    if (e.key === "ArrowUp"){
-        KEY_UP = false;
-    }
-    if (e.key === "ArrowDown"){
-        KEY_DOWN = false;
-    }
-    if (e.key === "ArrowLeft"){
-        KEY_LEFT = false;
-    }
-    if (e.key === "ArrowRight"){ 
-        KEY_RIGHT = false;
-    }
-}
 
 
 /// Game Functions
@@ -176,34 +136,24 @@ function createUfo(ufo){
 }
 
 
-
-
 /// Basics
 function update(){
     // Button presses
-    if(KEY_UP){
-        if(rocket.y > 0){
-            rocket.moveUp();
-        } 
+    if (keyState.KEY_UP && rocket.y > 0) {
+        rocket.moveUp();
     }
-    if(KEY_DOWN){
-        if(rocket.y + rocket.height < canvas.height){
-            rocket.moveDown();
-        }
+    if (keyState.KEY_DOWN && rocket.y + rocket.height < canvas.height) {
+        rocket.moveDown();
     }
-    if(KEY_LEFT){
-        if(rocket.x > 0){
-            rocket.moveLeft();
-        }
+    if (keyState.KEY_LEFT && rocket.x > 0) {
+        rocket.moveLeft();
     }
-    if(KEY_RIGHT){
-        if(rocket.x + rocket.height < 0.8*canvas.width){
-            rocket.moveRight();
-        }
+    if (keyState.KEY_RIGHT && rocket.x + rocket.width < 0.8 * canvas.width) {
+        rocket.moveRight();
     }
-    if(KEY_SPACE){
+    if (keyState.KEY_SPACE) {
         let currentTime = Date.now();
-        if (currentTime - lastShotTime >= shotCooldown) { 
+        if (currentTime - lastShotTime >= shotCooldown) {
             createShot();
             lastShotTime = currentTime;
         }
@@ -219,7 +169,7 @@ function update(){
 }
 
 function loadImages(){
-    background = new Background('img/spaceBackground.jpg')
+    background = new MovingBackground('img/spaceBackground.jpg')
     rocket = new Rocket(40, 200, 100, 50, 'img/rocket.png', rocketSpeed);
 }
 

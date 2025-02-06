@@ -1,4 +1,4 @@
-export class Background {
+export class MovingBackground {
     constructor(src) {
         this.x = 0;
         this.speed = 0.5;
