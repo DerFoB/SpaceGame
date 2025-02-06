@@ -10,21 +10,17 @@ class Enemy extends Gameobject {
     move() {
         this.x -= this.speed;
     }
-
-    speedChange(speedChange) {
-        this.speed += speedChange;
-    }
 }
 
 export class NormalUfo extends Enemy {
-    constructor(x, y) {
-        super(x, y, 100, 40, 'img/enemies/normalUFo.png', 1, 5);
+    constructor(x, y, speed) {
+        super(x, y, 100, 40, 'img/enemies/normalUFo.png', 1, speed);
     }
 }
 
 export class FastUfo extends Enemy {
-    constructor(x, y) {
-        super(x, y, 80, 30, 'img/enemies/fastUfo.png', 2, 8);
+    constructor(x, y, speed) {
+        super(x, y, 80, 30, 'img/enemies/fastUfo.png', 2, 1.4*speed);
     }
 }
 

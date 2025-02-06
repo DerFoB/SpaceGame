@@ -10,6 +10,7 @@ import { collision, deleteObjectFromArray } from './functionality/eventHandler.j
 const rocketSpeed = 12;
 let lives = 5;
 
+let ufoSpeed = 5;
 const ufoSpeedChange = 0.2;
 let ufoSpawnRate = 5000;
 const minSpawnRate = 1000;
@@ -30,6 +31,7 @@ let ufos = [];
 let shots = [];
 let rocket;
 let background;
+
 
 
 /// Game Functions
@@ -71,14 +73,14 @@ function checkCollision(){
 
         shots.forEach(function(shot){   // Collision Shot -> Ufo
             if(collision(ufo, shot)){
-                shots = shots.filter(u => u != shot);
+                shots = deleteObjectFromArray(shots, shot)
                 ufo.img.src = 'img/boom.png';
                 setTimeout(() => {
                     ufos = deleteObjectFromArray(ufos, ufo);
                 }, 70);
 
                 score += ufo.points;
-                ufo.speedChange(ufoSpeedChange);
+                ufoSpeed += ufoSpeedChange;
             }
             if(shot.x > canvas.width){
                 shots = deleteObjectFromArray(shots, shot);
@@ -105,11 +107,12 @@ function spawnUfos(){
     const randomHeight = Math.random() * (canvas.height - 50) + 5;
 
     if(ufoSpwanCount % 5 === 0){
-        createUfo(new FastUfo(canvas.width, randomHeight));
+        createUfo(new FastUfo(canvas.width, randomHeight, ufoSpeed));
         ufoSpwanCount = 1;
     } else {
-        createUfo(new NormalUfo(canvas.width, randomHeight));
+        createUfo(new NormalUfo(canvas.width, randomHeight, ufoSpeed));
     }
+    console.log(ufoSpeed);
 
     let nextSpawn;
 
