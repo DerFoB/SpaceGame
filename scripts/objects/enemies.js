@@ -1,21 +1,14 @@
-class Enemy {
+import { Gameobject } from "./gameObject.js";
+
+class Enemy extends Gameobject {
     constructor(x, y, width, height, imgSrc, points, speed) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.img = new Image();
-        this.img.src = imgSrc;
+        super(x, y, width, height, imgSrc);
         this.points = points;
         this.speed = speed;
     }
 
     move() {
         this.x -= this.speed;
-    }
-
-    draw(ctx) {
-        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
     }
 
     speedChange(speedChange) {

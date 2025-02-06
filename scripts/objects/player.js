@@ -1,11 +1,8 @@
-export class Rocket {
+import { Gameobject } from "./gameObject.js";
+
+export class Rocket extends Gameobject{
     constructor(x, y, width, height, imgSrc, speed) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.img = new Image();
-        this.img.src = imgSrc;
+        super(x, y, width, height, imgSrc);
         this.speed = speed;
     }
 
@@ -23,9 +20,5 @@ export class Rocket {
 
     moveRight() {
         this.x += this.speed;
-    }
-
-    draw(ctx) {
-        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
     }
 }

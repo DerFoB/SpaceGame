@@ -2,7 +2,9 @@ import { MovingBackground } from './objects/background.js';
 import { NormalUfo, FastUfo } from './objects/enemies.js';
 import { Rocket } from './objects/player.js';
 import { Shot } from './objects/shots.js';
+import { Explosion } from './objects/explosion.js';
 import { keyState } from './functionality/inputHandler.js';
+import { collision, deleteObjectFromArray } from './functionality/eventHandler.js';
 
 /// Settings
 const rocketSpeed = 12;
@@ -52,18 +54,14 @@ function endGame(){
 /// Collision
 function checkCollision(){
     ufos.forEach(function(ufo){         // Collision Ufo -> Rocket
-        if(rocket.x + rocket.width > ufo.x &&
-            rocket.y + rocket.height > ufo.y &&
-            rocket.x < ufo.x + ufo.width && 
-            rocket.y < ufo.y + ufo.height
-        ){
+        if(collision(rocket, ufo)){
             rocket.img.src = 'img/boom.png';
-            ufos = ufos.filter(u => u != ufo);
+            ufos = deleteObjectFromArray(ufos, ufo);
 
             endGame();
         }
-        if(ufo.x + ufo.width < 0){
-            ufos = ufos.filter(u => u != ufo);
+        if(ufo.x + ufo.width < 0){      // Collision Ufo -> End Zone
+            ufos = deleteObjectFromArray(ufos, ufo);
 
             lives--;
             if(lives < 1){
@@ -72,22 +70,18 @@ function checkCollision(){
         }
 
         shots.forEach(function(shot){   // Collision Shot -> Ufo
-            if(ufo.x + ufo.width > shot.x &&
-                ufo.y + ufo.height > shot.y &&
-                ufo.x < shot.x + shot.width && 
-                ufo.y < shot.y + shot.height
-            ){
-                shots = shots.filter(u => u != shot)
+            if(collision(ufo, shot)){
+                shots = shots.filter(u => u != shot);
                 ufo.img.src = 'img/boom.png';
                 setTimeout(() => {
-                    ufos = ufos.filter(u => u != ufo);
+                    ufos = deleteObjectFromArray(ufos, ufo);
                 }, 70);
 
                 score += ufo.points;
                 ufo.speedChange(ufoSpeedChange);
             }
             if(shot.x > canvas.width){
-                shots = shots.filter(u => u != shot);
+                shots = deleteObjectFromArray(shots, shot);
             }
         });
     });
