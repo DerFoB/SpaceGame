@@ -8,8 +8,23 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Background Blur for Popup -->
+    <div id="overlay" class="overlay"></div>
+    <!-- Custom Popup -->
+    <div id="gameModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Game Over</h2>
+            <p id="modalMessage"></p>
+            <input type="text" id="playerNameInput" placeholder="Your Name" style="display: none;" maxlength="15">
+            <button id="modalButton">OK</button>
+        </div>
+    </div>
+    
     <div class="game-container">
+        <!-- Game -->
         <canvas id="gameCanvas" width="720" height="480"></canvas>
+
+        <!-- Instructions -->
         <div class="instructions">
             <h2>Game Instructions</h2>
             <table>
