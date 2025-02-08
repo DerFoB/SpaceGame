@@ -6,6 +6,7 @@ export class Gameobject {
         this.height = height;
         this.img = new Image();
         this.img.src = imgSrc;
+        this.visible = true;
     }
 
     move() {

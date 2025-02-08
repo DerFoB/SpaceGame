@@ -2,9 +2,9 @@ import { MovingBackground } from './objects/background.js';
 import { NormalUfo, FastUfo } from './objects/enemies.js';
 import { Rocket } from './objects/player.js';
 import { Shot } from './objects/shots.js';
-import { Explosion } from './objects/explosion.js';
+import { createExplosion } from './objects/explosion.js';
 import { keyState } from './functionality/inputHandler.js';
-import { collision, deleteObjectFromArray } from './functionality/eventHandler.js';
+import { collision, deleteObjectFromArray, drawIfVisible } from './functionality/eventHandler.js';
 
 /// Settings
 const rocketSpeed = 12;
@@ -18,6 +18,7 @@ const minSpawnRate = 1000;
 const shotSpeed =  15;
 const shotCooldown = 300;
 
+const explosionLifetime = 100;
 
 /// Initializes
 let score = 0;
@@ -29,6 +30,7 @@ let updateInterval;
 
 let ufos = [];
 let shots = [];
+let explosions = [];
 let rocket;
 let background;
 
@@ -57,10 +59,13 @@ function endGame(){
 function checkCollision(){
     ufos.forEach(function(ufo){         // Collision Ufo -> Rocket
         if(collision(rocket, ufo)){
-            rocket.img.src = 'img/boom.png';
+            let explosion = createExplosion(rocket);
+            explosions.push(explosion);
+
             ufos = deleteObjectFromArray(ufos, ufo);
 
             endGame();
+  
         }
         if(ufo.x + ufo.width < 0){      // Collision Ufo -> End Zone
             ufos = deleteObjectFromArray(ufos, ufo);
@@ -73,10 +78,13 @@ function checkCollision(){
 
         shots.forEach(function(shot){   // Collision Shot -> Ufo
             if(collision(ufo, shot)){
+                let explosion = createExplosion(ufo);
+                explosions.push(explosion);
+
                 shots = deleteObjectFromArray(shots, shot)
-                ufo.img.src = 'img/boom.png';
                 setTimeout(() => {
                     ufos = deleteObjectFromArray(ufos, ufo);
+                    deleteObjectFromArray(explosions, explosion);
                 }, 70);
 
                 score += ufo.points;
@@ -96,7 +104,7 @@ function createShot(){
     let shot = new Shot(rocket.x + rocket.width, 
         rocket.y + rocket.height/4, 
         40, 20, 'img/laser.png');
-    shots.push(shot);
+        shots.push(shot);
 }
 
 
@@ -112,7 +120,6 @@ function spawnUfos(){
     } else {
         createUfo(new NormalUfo(canvas.width, randomHeight, ufoSpeed));
     }
-    console.log(ufoSpeed);
 
     let nextSpawn;
 
@@ -163,6 +170,13 @@ function update(){
     shots.forEach(function(shot){
         shot.move(shotSpeed);
     });
+
+    //delet explosion after lifetime
+    explosions.forEach(function(explosion){
+        if(Date.now() > explosion.initTime + explosionLifetime){
+            explosions = deleteObjectFromArray(explosions, explosion);
+        }
+    });
 }
 
 function loadImages(){
@@ -173,13 +187,15 @@ function loadImages(){
 function draw(){ //redraw Canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     background.draw(ctx, canvas);
-    rocket.draw(ctx);
-
+    drawIfVisible(ctx, rocket);
     ufos.forEach(function(ufo){
-        ufo.draw(ctx);
+        drawIfVisible(ctx, ufo);
     })
     shots.forEach(function(shot){
-        shot.draw(ctx);
+        drawIfVisible(ctx, shot);
+    })
+    explosions.forEach(function(explosion){
+        drawIfVisible(ctx, explosion);
     })
 
     // show Score
