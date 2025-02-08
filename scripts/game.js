@@ -49,9 +49,33 @@ function startGame(){
 
 function endGame(){
     setTimeout(() => {
-                alert(`Game over! \nYour score is: ${score} \nDo you want to restart?`);
-                location.reload();
-            }, 200);
+        let highscorePlayer;
+
+        if (localStorage.getItem("highscore") !== null) {
+            highscorePlayer = JSON.parse(localStorage.getItem("highscore"));
+        } else {
+            highscorePlayer = { name: "unknown", score: -99 };
+        }
+
+        if(score > highscorePlayer.score){
+            let playerName = prompt("New Highscore!! Enter your name:");
+
+            if (!playerName || playerName.trim() === "") {
+                playerName = "unknown";
+            }
+
+            highscorePlayer.name = playerName
+            highscorePlayer.score = score
+
+            localStorage.setItem("highscore", JSON.stringify(highscorePlayer))
+            alert(`Game over! \nNew Highscore!!! \nYour highscore is: ${score}\nDo you want to restart?`);
+
+        } else {
+            alert(`Game over! \nYour score is: ${score} \nThe local highscore is: ${highscorePlayer.score} by ${highscorePlayer.name} \nDo you want to restart?`);
+        }
+
+        location.reload();
+    }, 200);
 }
 
 
@@ -123,8 +147,8 @@ function spawnUfos(){
 
     let nextSpawn;
 
-    if (Math.random() < 0.1) { //random chance to double spawn
-        nextSpawn = 200
+    if (Math.random() < 0.1) { //random chance to fast spawn ufo
+        nextSpawn = 700
     } else {
         //randomize and fasten Ufo spawns
         ufoSpawnRate = Math.max(minSpawnRate, ufoSpawnRate * 0.95);
