@@ -1,13 +1,13 @@
 import { MovingBackground } from './objects/background.js';
 import { NormalUfo, FastUfo } from './objects/enemies.js';
 import { Rocket } from './objects/player.js';
-import { Shot } from './objects/shots.js';
+import { createShot } from './objects/shots.js';
 import { createExplosion } from './objects/explosion.js';
 import { keyState } from './functionality/inputHandler.js';
 import { collision, deleteObjectFromArray, drawIfVisible } from './functionality/eventHandler.js';
 import { endGamePopup } from './functionality/popup.js';
 
-/// Settings
+/// Settings 
 const rocketSpeed = 12;
 let lives = 5;
 
@@ -31,7 +31,7 @@ let ctx;
 let updateInterval;
 
 let ufos = [];
-let shots = [];
+let rocketShots = [];
 let explosions = [];
 let rocket;
 let background;
@@ -78,12 +78,12 @@ function checkCollision(){
             }
         }
 
-        shots.forEach(function(shot){   // Collision Shot -> Ufo
+        rocketShots.forEach(function(shot){   // Collision Shot -> Ufo
             if(collision(ufo, shot)){
                 let explosion = createExplosion(ufo);
                 explosions.push(explosion);
 
-                shots = deleteObjectFromArray(shots, shot)
+                rocketShots = deleteObjectFromArray(rocketShots, shot)
                 setTimeout(() => {
                     ufos = deleteObjectFromArray(ufos, ufo);
                     deleteObjectFromArray(explosions, explosion);
@@ -93,20 +93,11 @@ function checkCollision(){
                 ufoSpeed += ufoSpeedChange;
             }
             if(shot.x > canvas.width){
-                shots = deleteObjectFromArray(shots, shot);
+                rocketShots = deleteObjectFromArray(rocketShots, shot);
             }
         });
     });
 
-}
-
-
-/// Shots
-function createShot(){
-    let shot = new Shot(rocket.x + rocket.width, 
-        rocket.y + rocket.height/4, 
-        40, 20, 'img/laser.png');
-        shots.push(shot);
 }
 
 
@@ -160,7 +151,7 @@ function update(){
     if (keyState.KEY_SPACE) {
         let currentTime = Date.now();
         if (currentTime - lastShotTime >= shotCooldown) {
-            createShot();
+            createShot(rocketShots, rocket.x + rocket.width, rocket.y + rocket.height/4);
             lastShotTime = currentTime;
         }
     }
@@ -169,7 +160,7 @@ function update(){
     ufos.forEach(function(ufo){
         ufo.move();
     });
-    shots.forEach(function(shot){
+    rocketShots.forEach(function(shot){
         shot.move(shotSpeed);
     });
 
@@ -193,7 +184,7 @@ function draw(){ //redraw Canvas
     ufos.forEach(function(ufo){
         drawIfVisible(ctx, ufo);
     })
-    shots.forEach(function(shot){
+    rocketShots.forEach(function(shot){
         drawIfVisible(ctx, shot);
     })
     explosions.forEach(function(explosion){
