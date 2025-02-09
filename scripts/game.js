@@ -1,4 +1,4 @@
-import { MovingBackground } from './objects/background.js';
+import { MovingLayeredBackground } from './objects/background.js';
 import { NormalUfo, FastUfo } from './objects/enemies.js';
 import { Rocket } from './objects/player.js';
 import { createShot } from './objects/shots.js';
@@ -42,7 +42,13 @@ let background;
 function startGame(){
     canvas = document.getElementById('gameCanvas');
     ctx = canvas.getContext('2d');
-    loadImages();
+
+    background = new MovingLayeredBackground(0.8, 
+        'img/background/spaceBackgroundBaseLayer.png', 
+        'img/background/spaceBackgroundMiddleLayer.png', 
+        'img/background/spaceBackgroundFrontLayer.png');
+    rocket = new Rocket(40, 200, 100, 50, 'img/rocket.png', rocketSpeed);
+
     updateInterval = setInterval(update, 1000/25);
     spawnUfos();
     setInterval(checkCollision, 1000/25);
@@ -101,17 +107,18 @@ function checkCollision(){
 }
 
 
-/// Ufos
-let ufoSpwanCount = 1;
+/// Enemies
+let ufoSpawnCount = 1;
 
 function spawnUfos(){
     const randomHeight = Math.random() * (canvas.height - 50) + 5;
 
-    if(ufoSpwanCount % 5 === 0){
-        createUfo(new FastUfo(canvas.width, randomHeight, ufoSpeed));
-        ufoSpwanCount = 1;
+    if(ufoSpawnCount % 5 === 0){
+        ufos.push(new FastUfo(canvas.width, randomHeight, ufoSpeed));
+        ufoSpawnCount = 1;
     } else {
-        createUfo(new NormalUfo(canvas.width, randomHeight, ufoSpeed));
+        ufos.push(new NormalUfo(canvas.width, randomHeight, ufoSpeed));
+        ufoSpawnCount ++;
     }
 
     let nextSpawn;
@@ -125,11 +132,6 @@ function spawnUfos(){
     }
     
     setTimeout(spawnUfos, nextSpawn); 
-}
-
-function createUfo(ufo){
-    ufos.push(ufo);
-    ufoSpwanCount++;
 }
 
 
@@ -172,14 +174,12 @@ function update(){
     });
 }
 
-function loadImages(){
-    background = new MovingBackground('img/spaceBackground.jpg')
-    rocket = new Rocket(40, 200, 100, 50, 'img/rocket.png', rocketSpeed);
-}
 
-function draw(){ //redraw Canvas
+function draw(){ // redraw Canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     background.draw(ctx, canvas);
+
+    // draw objects
     drawIfVisible(ctx, rocket);
     ufos.forEach(function(ufo){
         drawIfVisible(ctx, ufo);
