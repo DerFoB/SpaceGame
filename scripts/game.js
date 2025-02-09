@@ -78,9 +78,12 @@ function checkCollision(){
 
             if(gameRunning === true){
                 lives--;
-            }
-            if(lives < 1){
-                endGame();
+                if(lives < 1){
+                    let explosion = createExplosion(rocket);
+                    explosions.push(explosion);
+                    
+                    endGame();
+                }
             }
         }
 
