@@ -19,9 +19,9 @@ const minSpawnRate = 1000;
 const shotSpeed =  15;
 const shotCooldown = 300;
 const maxShots = 6;
-const reloadTime = 3000;
-
-const explosionLifetime = 100;
+const reloadTime = 2000;
+ 
+const explosionLifetime = 150;
 
 /// Initializes
 let score = 0;
@@ -50,7 +50,7 @@ function startGame(){
         'img/background/spaceBackgroundBaseLayer.png', 
         'img/background/spaceBackgroundMiddleLayer.png', 
         'img/background/spaceBackgroundFrontLayer.png');
-    rocket = new Rocket(40, 200, 100, 50, 'img/rocket.png', rocketSpeed);
+    rocket = new Rocket(40, canvas.height/2-25, 100, 45, 'img/rocket/rocket.png', rocketSpeed);
     ammoCount = maxShots;
 
     updateInterval = setInterval(update, 1000/25);

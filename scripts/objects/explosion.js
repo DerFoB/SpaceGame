@@ -9,5 +9,5 @@ class Explosion extends Gameobject {
 
 export function createExplosion(obj) {
     obj.visible = false;
-    return new Explosion(obj.x, obj.y, obj.width, obj.height, '../../img/boom.png');
+    return new Explosion(obj.x-10, obj.y-10, obj.width+20, obj.height+20, '../../img/explosion.png');
 }
