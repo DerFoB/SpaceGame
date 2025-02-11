@@ -18,6 +18,8 @@ const minSpawnRate = 1000;
 
 const shotSpeed =  15;
 const shotCooldown = 300;
+const maxShots = 6;
+const reloadTime = 3000;
 
 const explosionLifetime = 100;
 
@@ -26,6 +28,7 @@ let score = 0;
 let gameRunning = true;
 
 let lastShotTime = 0;
+let ammoCount;
 let canvas;
 let ctx;
 let updateInterval;
@@ -48,6 +51,7 @@ function startGame(){
         'img/background/spaceBackgroundMiddleLayer.png', 
         'img/background/spaceBackgroundFrontLayer.png');
     rocket = new Rocket(40, 200, 100, 50, 'img/rocket.png', rocketSpeed);
+    ammoCount = maxShots;
 
     updateInterval = setInterval(update, 1000/25);
     spawnUfos();
@@ -126,10 +130,10 @@ function spawnUfos(){
 
     let nextSpawn;
 
-    if (Math.random() < 0.1) { //random chance to fast spawn ufo
-        nextSpawn = 700
+    if (Math.random() < 0.1) { // random chance to fast spawn ufo
+        nextSpawn = minSpawnRate
     } else {
-        //randomize and fasten Ufo spawns
+        // randomize and fasten Ufo spawns
         ufoSpawnRate = Math.max(minSpawnRate, ufoSpawnRate * 0.95);
         nextSpawn = Math.random() * 1000 + ufoSpawnRate;
     }
@@ -140,6 +144,8 @@ function spawnUfos(){
 
 /// Basics
 function update(){
+    let currentTime = Date.now();
+
     // Button presses
     if (keyState.KEY_UP && rocket.y > 0) {
         rocket.moveUp();
@@ -154,14 +160,19 @@ function update(){
         rocket.moveRight();
     }
     if (keyState.KEY_SPACE) {
-        let currentTime = Date.now();
-        if (currentTime - lastShotTime >= shotCooldown) {
+        if (currentTime - lastShotTime >= shotCooldown && ammoCount > 0) {
             createShot(rocketShots, rocket.x + rocket.width, rocket.y + rocket.height/4);
             lastShotTime = currentTime;
+            ammoCount--; 
         }
     }
 
-    //move objects
+    // reload ammo
+    if (currentTime - lastShotTime >= reloadTime){
+        ammoCount = maxShots;
+    }
+
+    // move objects
     ufos.forEach(function(ufo){
         ufo.move();
     });
@@ -169,7 +180,7 @@ function update(){
         shot.move(shotSpeed);
     });
 
-    //delet explosion after lifetime
+    // delete explosion after lifetime
     explosions.forEach(function(explosion){
         if(Date.now() > explosion.initTime + explosionLifetime){
             explosions = deleteObjectFromArray(explosions, explosion);
@@ -177,6 +188,9 @@ function update(){
     });
 }
 
+const hudMargin = 30;
+const ammoInnerPadding = 5;
+const ammoSize = 20;
 
 function draw(){ // redraw Canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -194,11 +208,42 @@ function draw(){ // redraw Canvas
         drawIfVisible(ctx, explosion);
     })
 
-    // show Score
+    /// HUD
     ctx.fillStyle = "white";
     ctx.font = "20px Arial";
-    ctx.fillText(`Score: ${score}`, canvas.width - 120, 30);
-    ctx.fillText(`Lives: ${lives}`, 30, 30);
+
+    // Score
+    ctx.fillText(`Score: ${score}`, canvas.width - 120, hudMargin);
+
+    // Lives
+    let livesTxt = 'Lives: ';
+    for (let i = 0; i < lives; i++) {
+        livesTxt += '🤍';
+    }
+    ctx.fillText(livesTxt, hudMargin, hudMargin);
+    
+    ctx.beginPath();
+    ctx.strokeStyle = "white";
+
+    // Ammo
+    for (let i = 0; i < ammoCount; i++) {
+        ctx.fillRect(hudMargin + i*(ammoInnerPadding + ammoSize), 
+            canvas.height - hudMargin - ammoSize, 
+            ammoSize, ammoSize); 
+    }
+    ctx.rect(hudMargin - ammoInnerPadding,
+        canvas.height - hudMargin - ammoSize - ammoInnerPadding, 
+        maxShots * ammoSize + (maxShots+1) * ammoInnerPadding, 
+        ammoSize + 2*ammoInnerPadding);
+
+    // Reload
+    let percentageReloadtimer = Math.min(1 ,(Date.now()-lastShotTime)/reloadTime); 
+    ctx.fillRect(hudMargin - ammoInnerPadding, 
+        canvas.height - hudMargin - ammoSize - 3*ammoInnerPadding, 
+        percentageReloadtimer * (maxShots * ammoSize + (maxShots+1) * ammoInnerPadding), 
+        ammoInnerPadding); 
+
+    ctx.stroke();
 
     requestAnimationFrame(draw);
 }

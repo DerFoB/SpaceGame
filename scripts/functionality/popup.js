@@ -5,7 +5,7 @@ export function endGamePopup(score){
             if (localStorage.getItem("highscore") !== null) {
                 highscorePlayer = JSON.parse(localStorage.getItem("highscore"));
             } else {
-                highscorePlayer = { name: "unknown", score: -99 };
+                highscorePlayer = { name: "unknown", score: 0 };
             }
         
             let modal = document.getElementById("gameModal");
