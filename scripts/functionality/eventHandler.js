@@ -14,8 +14,3 @@ export function deleteObjectFromArray(arr, obj){
     return arr.filter(u => u != obj);
 }
 
-export function drawIfVisible(ctx, obj){
-    if(obj.visible === true){
-        obj.draw(ctx);
-    }
-}

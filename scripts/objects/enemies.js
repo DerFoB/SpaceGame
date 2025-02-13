@@ -24,3 +24,24 @@ export class FastUfo extends Enemy {
     }
 }
 
+export class Boss extends Enemy {
+    constructor(canvas) {
+        const canonWidth = 80;
+        const canonHeight = 40;
+        super(200, 0, 80, canvas.height, 'img/enemies/BossTemp.png', 0.5);
+        this.canon = new Canon(canvas.width, canvas.height/2 - canonHeight/2, canonWidth, canonHeight);
+        this.canonWidth = canonWidth;
+        this.canonHeight = canonHeight;
+    }
+
+    draw(ctx){
+        super.draw(ctx);
+        this.canon.draw(ctx);
+    }
+}
+
+class Canon extends Gameobject {
+    constructor(x, y, width, height) {
+        super(x, y, width, height, 'img/enemies/BossCanonTemp.png');
+    }
+}

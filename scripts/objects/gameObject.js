@@ -14,6 +14,8 @@ export class Gameobject {
     }
 
     draw(ctx) {
-        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+        if (this.visible === true) {
+            ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+        }
     }
 }

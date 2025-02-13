@@ -1,10 +1,10 @@
 import { MovingLayeredBackground } from './objects/background.js';
-import { NormalUfo, FastUfo } from './objects/enemies.js';
+import { NormalUfo, FastUfo, Boss } from './objects/enemies.js';
 import { Rocket } from './objects/player.js';
 import { createShot } from './objects/shots.js';
 import { createExplosion } from './objects/explosion.js';
 import { keyState } from './functionality/inputHandler.js';
-import { collision, deleteObjectFromArray, drawIfVisible } from './functionality/eventHandler.js';
+import { collision, deleteObjectFromArray } from './functionality/eventHandler.js';
 import { endGamePopup } from './functionality/popup.js';
 
 /// Settings 
@@ -36,6 +36,7 @@ let updateInterval;
 let ufos = [];
 let rocketShots = [];
 let explosions = [];
+let bosses = [];
 let rocket;
 let background;
 
@@ -55,6 +56,7 @@ function startGame(){
 
     updateInterval = setInterval(update, 1000/25);
     spawnUfos();
+    bosses.push(new Boss(canvas));
     setInterval(checkCollision, 1000/25);
     draw();
 }
@@ -179,6 +181,12 @@ function update(){
     rocketShots.forEach(function(shot){
         shot.move(shotSpeed);
     });
+    bosses.forEach(function(boss) {
+        //if (boss.x > canvas.width - boss.width) {
+            boss.move();
+            console.log(boss);
+        //}
+    });
 
     // delete explosion after lifetime
     explosions.forEach(function(explosion){
@@ -197,15 +205,18 @@ function draw(){ // redraw Canvas
     background.draw(ctx, canvas);
 
     // draw objects
-    drawIfVisible(ctx, rocket);
+    rocket.draw(ctx);
     ufos.forEach(function(ufo){
-        drawIfVisible(ctx, ufo);
+        ufo.draw(ctx);
     })
     rocketShots.forEach(function(shot){
-        drawIfVisible(ctx, shot);
+        shot.draw(ctx);
     })
     explosions.forEach(function(explosion){
-        drawIfVisible(ctx, explosion);
+        explosion.draw(ctx);
+    })
+    bosses.forEach(function(boss){
+        boss.draw(ctx);
     })
 
     /// HUD
