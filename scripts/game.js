@@ -182,10 +182,9 @@ function update(){
         shot.move(shotSpeed);
     });
     bosses.forEach(function(boss) {
-        //if (boss.x > canvas.width - boss.width) {
+        if (boss.x > canvas.width - boss.width) {
             boss.move();
-            console.log(boss);
-        //}
+        }
     });
 
     // delete explosion after lifetime

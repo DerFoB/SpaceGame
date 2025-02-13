@@ -28,8 +28,8 @@ export class Boss extends Enemy {
     constructor(canvas) {
         const canonWidth = 80;
         const canonHeight = 40;
-        super(200, 0, 80, canvas.height, 'img/enemies/BossTemp.png', 0.5);
-        this.canon = new Canon(canvas.width, canvas.height/2 - canonHeight/2, canonWidth, canonHeight);
+        super(canvas.width + 2/3*canonWidth, 0, 80, canvas.height, 'img/enemies/BossTemp.png', 20, 0.5);
+        this.canon = new Canon(canvas.width, canvas.height/2 - canonHeight/2, canonWidth, canonHeight, this.speed);
         this.canonWidth = canonWidth;
         this.canonHeight = canonHeight;
     }
@@ -38,10 +38,20 @@ export class Boss extends Enemy {
         super.draw(ctx);
         this.canon.draw(ctx);
     }
+
+    move() {
+        super.move();
+        this.canon.move();
+    }
 }
 
 class Canon extends Gameobject {
-    constructor(x, y, width, height) {
+    constructor(x, y, width, height, speed) {
         super(x, y, width, height, 'img/enemies/BossCanonTemp.png');
+        this.speed = speed;
+    }
+
+    move() {
+        this.x -= this.speed;
     }
 }
