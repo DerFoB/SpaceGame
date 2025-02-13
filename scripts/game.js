@@ -56,7 +56,7 @@ function startGame(){
 
     updateInterval = setInterval(update, 1000/25);
     spawnUfos();
-    bosses.push(new Boss(canvas));
+    bosses.push(new Boss(canvas, 3));
     setInterval(checkCollision, 1000/25);
     draw();
 }

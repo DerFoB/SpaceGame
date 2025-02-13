@@ -25,23 +25,33 @@ export class FastUfo extends Enemy {
 }
 
 export class Boss extends Enemy {
-    constructor(canvas) {
+    constructor(canvas, nrOfCanons) {
         const canonWidth = 80;
         const canonHeight = 40;
         super(canvas.width + 2/3*canonWidth, 0, 80, canvas.height, 'img/enemies/BossTemp.png', 20, 0.5);
-        this.canon = new Canon(canvas.width, canvas.height/2 - canonHeight/2, canonWidth, canonHeight, this.speed);
+        this.canons = []
+        for (let i = 1; i <= nrOfCanons; i++) {
+            let canonY =  i*(canvas.height/(nrOfCanons+1)) - canonHeight/2;
+            this.canons.push(new Canon(canvas.width, canonY, canonWidth, canonHeight, this.speed));
+            
+        }
+        new Canon(canvas.width, canvas.height/2 - canonHeight/2, canonWidth, canonHeight, this.speed);
         this.canonWidth = canonWidth;
         this.canonHeight = canonHeight;
     }
 
     draw(ctx){
         super.draw(ctx);
-        this.canon.draw(ctx);
+        this.canons.forEach(function(canon){
+            canon.draw(ctx);
+        });
     }
 
     move() {
         super.move();
-        this.canon.move();
+        this.canons.forEach(function(canon){
+            canon.move();
+        }); 
     }
 }
 
