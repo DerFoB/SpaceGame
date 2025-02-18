@@ -1,4 +1,6 @@
 import { Gameobject } from "./gameObject.js";
+import { Shot } from "./shots.js";
+import { Explosion } from "./explosion.js";
 
 export class Rocket extends Gameobject{
     constructor(x, y, width, height, imgSrc, speed) {
@@ -20,5 +22,14 @@ export class Rocket extends Gameobject{
 
     moveRight() {
         this.x += this.speed;
+    }
+
+    shoot() {
+        return new Shot(this.x + this.width, this.y + this.height/4, 40, 20, '../../img/laser.png');
+    }
+
+    explode() {
+        this.visible = false;
+        return new Explosion(this.x-10, this.y-10, this.width+20, this.height+20, '../../img/explosion.png');
     }
 }

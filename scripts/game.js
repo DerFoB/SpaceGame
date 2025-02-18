@@ -1,8 +1,6 @@
 import { MovingLayeredBackground } from './objects/background.js';
 import { NormalUfo, FastUfo, Boss } from './objects/enemies.js';
 import { Rocket } from './objects/player.js';
-import { createShot } from './objects/shots.js';
-import { createExplosion } from './objects/explosion.js';
 import { keyState } from './functionality/inputHandler.js';
 import { collision, deleteObjectFromArray } from './functionality/eventHandler.js';
 import { endGamePopup } from './functionality/popup.js';
@@ -56,7 +54,7 @@ function startGame(){
 
     updateInterval = setInterval(update, 1000/25);
     spawnUfos();
-    bosses.push(new Boss(canvas, 3));
+    bosses.push(new Boss(canvas, 2));
     setInterval(checkCollision, 1000/25);
     draw();
 }
@@ -71,8 +69,7 @@ function endGame(){
 function checkCollision(){
     ufos.forEach(function(ufo){         // Collision Ufo -> Rocket
         if(collision(rocket, ufo)){
-            let explosion = createExplosion(rocket);
-            explosions.push(explosion);
+            explosions.push(rocket.explode());
 
             ufos = deleteObjectFromArray(ufos, ufo);
 
@@ -85,8 +82,7 @@ function checkCollision(){
             if(gameRunning === true){
                 lives--;
                 if(lives < 1){
-                    let explosion = createExplosion(rocket);
-                    explosions.push(explosion);
+                    explosions.push(rocket.explode());
                     
                     endGame();
                 }
@@ -95,8 +91,7 @@ function checkCollision(){
 
         rocketShots.forEach(function(shot){   // Collision Shot -> Ufo
             if(collision(ufo, shot)){
-                let explosion = createExplosion(ufo);
-                explosions.push(explosion);
+                explosions.push(ufo.explode());
 
                 rocketShots = deleteObjectFromArray(rocketShots, shot)
                 setTimeout(() => {
@@ -163,7 +158,7 @@ function update(){
     }
     if (keyState.KEY_SPACE) {
         if (currentTime - lastShotTime >= shotCooldown && ammoCount > 0) {
-            createShot(rocketShots, rocket.x + rocket.width, rocket.y + rocket.height/4);
+            rocketShots.push(rocket.shoot());
             lastShotTime = currentTime;
             ammoCount--; 
         }
