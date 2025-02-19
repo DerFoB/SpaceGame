@@ -90,9 +90,10 @@ class HomingCanon extends Gameobject {
         this.x -= this.speed;
     }
 
-    aim(y) {
-        if(this.shooting === false){
-            this.y = y;
+    aim(targetY, followSpeed) {
+        // followspeed in percentage: 0.01 is slow, 1 is as fast as target
+        if (this.shooting === false) {
+            this.y += (targetY - this.y) * followSpeed;
         }
     }
 

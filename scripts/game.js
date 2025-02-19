@@ -217,7 +217,7 @@ function draw(){ // redraw Canvas
     })
     bosses.forEach(function(boss){
         boss.draw(ctx);
-        boss.homingCanon.aim(rocket.y)
+        boss.homingCanon.aim(rocket.y, 0.05)
     })
 
     /// HUD
