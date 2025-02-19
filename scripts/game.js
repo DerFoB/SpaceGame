@@ -30,6 +30,8 @@ let ammoCount;
 let canvas;
 let ctx;
 let updateInterval;
+let collisionInterval;
+let drawFrame; 
 
 let ufos = [];
 let rocketShots = [];
@@ -55,14 +57,21 @@ function startGame(){
     updateInterval = setInterval(update, 1000/25);
     spawnUfos();
     bosses.push(new Boss(canvas, 2));
-    setInterval(checkCollision, 1000/25);
+    collisionInterval = setInterval(checkCollision, 1000/25);
     draw();
 }
 
 function endGame(){
     gameRunning = false;
+    setTimeout(() => {
+        window.cancelAnimationFrame(drawFrame); // stop drawing
+        clearInterval(updateInterval);
+        clearInterval(collisionInterval);
+    }, 50);
+
     endGamePopup(score);
 }
+    
 
 
 /// Collision
@@ -94,10 +103,7 @@ function checkCollision(){
                 explosions.push(ufo.explode());
 
                 rocketShots = deleteObjectFromArray(rocketShots, shot)
-                setTimeout(() => {
-                    ufos = deleteObjectFromArray(ufos, ufo);
-                    deleteObjectFromArray(explosions, explosion);
-                }, 70);
+                ufos = deleteObjectFromArray(ufos, ufo);
 
                 score += ufo.points;
                 ufoSpeed += ufoSpeedChange;
@@ -211,6 +217,7 @@ function draw(){ // redraw Canvas
     })
     bosses.forEach(function(boss){
         boss.draw(ctx);
+        boss.homingCanon.aim(rocket.y)
     })
 
     /// HUD
@@ -250,7 +257,7 @@ function draw(){ // redraw Canvas
 
     ctx.stroke();
 
-    requestAnimationFrame(draw);
+    drawFrame = requestAnimationFrame(draw);
 }
 
 export { startGame };

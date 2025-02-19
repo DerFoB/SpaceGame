@@ -86,8 +86,12 @@ class HomingCanon extends Gameobject {
         this.shooting = false;
     }
 
-    aiming(y) {
-        if(this.shoting === false){
+    move() {
+        this.x -= this.speed;
+    }
+
+    aim(y) {
+        if(this.shooting === false){
             this.y = y;
         }
     }
