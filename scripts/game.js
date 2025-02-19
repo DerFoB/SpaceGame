@@ -15,7 +15,6 @@ let ufoSpawnRate = 5000;
 const minSpawnRate = 1000;
 
 const shotSpeed =  15;
-const shotCooldown = 300;
 const maxShots = 6;
 const reloadTime = 2000;
  
@@ -25,7 +24,6 @@ const explosionLifetime = 150;
 let score = 0;
 let gameRunning = true;
 
-let lastShotTime = 0;
 let ammoCount;
 let canvas;
 let ctx;
@@ -163,15 +161,15 @@ function update(){
         rocket.moveRight();
     }
     if (keyState.KEY_SPACE) {
-        if (currentTime - lastShotTime >= shotCooldown && ammoCount > 0) {
+        if(currentTime - rocket.lastShotTime >= rocket.shotCooldown && ammoCount > 0){
             rocketShots.push(rocket.shoot());
-            lastShotTime = currentTime;
+            rocket.lastShotTime = currentTime;
             ammoCount--; 
-        }
+        }     
     }
 
     // reload ammo
-    if (currentTime - lastShotTime >= reloadTime){
+    if (currentTime - rocket.lastShotTime >= reloadTime){
         ammoCount = maxShots;
     }
 
@@ -190,7 +188,7 @@ function update(){
 
     // delete explosion after lifetime
     explosions.forEach(function(explosion){
-        if(Date.now() > explosion.initTime + explosionLifetime){
+        if(currentTime > explosion.initTime + explosionLifetime){
             explosions = deleteObjectFromArray(explosions, explosion);
         }
     });
@@ -249,7 +247,7 @@ function draw(){ // redraw Canvas
         ammoSize + 2*ammoInnerPadding);
 
     // Reload
-    let percentageReloadtimer = Math.min(1 ,(Date.now()-lastShotTime)/reloadTime); 
+    let percentageReloadtimer = Math.min(1 ,(Date.now()-rocket.lastShotTime)/reloadTime); 
     ctx.fillRect(hudMargin - ammoInnerPadding, 
         canvas.height - hudMargin - ammoSize - 3*ammoInnerPadding, 
         percentageReloadtimer * (maxShots * ammoSize + (maxShots+1) * ammoInnerPadding), 

@@ -6,6 +6,8 @@ export class Rocket extends Gameobject{
     constructor(x, y, width, height, imgSrc, speed) {
         super(x, y, width, height, imgSrc);
         this.speed = speed;
+        this.shotCooldown = 300;
+        this.lastShotTime = 0;
     }
 
     moveUp() {
@@ -27,7 +29,7 @@ export class Rocket extends Gameobject{
     shoot() {
         return new Shot(this.x + this.width, this.y + this.height/4, 40, 20, '../../img/laser.png');
     }
-
+    
     explode() {
         this.visible = false;
         return new Explosion(this.x-10, this.y-10, this.width+20, this.height+20, '../../img/explosion.png');
