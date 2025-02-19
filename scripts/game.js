@@ -14,7 +14,6 @@ const ufoSpeedChange = 0.2;
 let ufoSpawnRate = 5000;
 const minSpawnRate = 1000;
 
-const shotSpeed =  15;
 const maxShots = 6;
 const reloadTime = 2000;
  
@@ -33,6 +32,7 @@ let drawFrame;
 
 let ufos = [];
 let rocketShots = [];
+let enemyShots = [];
 let explosions = [];
 let bosses = [];
 let rocket;
@@ -112,6 +112,18 @@ function checkCollision(){
         });
     });
 
+    enemyShots.forEach(function(enemyShot){ // Collision EnemyShots -> Rocket
+        if(collision(rocket, enemyShot)){
+            explosions.push(rocket.explode());
+
+            enemyShots = deleteObjectFromArray(enemyShots, enemyShot);
+
+            endGame();
+        }
+        if(enemyShot.x + enemyShot.width < 0){      // Collision EnemyShots -> End Zone
+            enemyShots = deleteObjectFromArray(enemyShots, enemyShot);
+        }
+    });
 }
 
 
@@ -178,12 +190,22 @@ function update(){
         ufo.move();
     });
     rocketShots.forEach(function(shot){
-        shot.move(shotSpeed);
+        shot.move();
     });
-    bosses.forEach(function(boss) {
+    bosses.forEach(function(boss) { // + boss logic
         if (boss.x > canvas.width - boss.width) {
             boss.move();
         }
+
+        boss.homingCanon.aim(rocket.y, 0.05)
+
+        const shot = boss.homingCanon.chargeAndStop();
+        if (shot) {
+            enemyShots.push(shot);
+        }
+    });
+    enemyShots.forEach(function(enemyShot){
+        enemyShot.move();
     });
 
     // delete explosion after lifetime
@@ -215,7 +237,9 @@ function draw(){ // redraw Canvas
     })
     bosses.forEach(function(boss){
         boss.draw(ctx);
-        boss.homingCanon.aim(rocket.y, 0.05)
+    })
+    enemyShots.forEach(function(enemyShot){
+        enemyShot.draw(ctx);
     })
 
     /// HUD

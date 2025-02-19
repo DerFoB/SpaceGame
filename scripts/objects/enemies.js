@@ -1,5 +1,6 @@
 import { Gameobject } from "./gameObject.js";
 import { Explosion } from "./explosion.js";
+import { Shot } from "./shots.js";
 
 class Enemy extends Gameobject {
     constructor(x, y, width, height, imgSrc, points, speed) {
@@ -84,6 +85,13 @@ class HomingCanon extends Gameobject {
         super(x, y, width, height, 'img/enemies/BossCanonTemp.png');
         this.speed = speed;
         this.shooting = false;
+        this.charging = false;
+        this.chargeProgress = 0;
+        this.chargeMax = 50;
+        this.reloadCooldown = 2500;
+        this.lastShotTime = Date.now();
+        this.chargeIndicatorImg = new Image();
+        this.chargeIndicatorImg.src = 'img/enemies/BossTemp.png';
     }
 
     move() {
@@ -91,15 +99,51 @@ class HomingCanon extends Gameobject {
     }
 
     aim(targetY, followSpeed) {
-        // followspeed in percentage: 0.01 is slow, 1 is as fast as target
-        if (this.shooting === false) {
+         // followspeed in percentage: 0.01 is slow, 1 is as fast as target
+        if (!this.charging) {
             this.y += (targetY - this.y) * followSpeed;
         }
     }
 
     shoot() {
-        this.shooting = true;
-        // shoot
-        this.shooting = false;
+        if (this.charging && this.chargeProgress >= this.chargeMax) {
+            this.charging = false;
+            this.chargeProgress = 0;
+            this.lastShotTime = Date.now();
+            return new Shot(this.x, this.y + this.height / 2, this.width/2, this.height, '../../img/laser.png', -30);
+        }
+        return null;
+    }
+
+    chargeAndStop() {
+        if (Date.now() - this.lastShotTime >= this.reloadCooldown) {
+            this.charging = true;
+            this.chargeProgress++;
+            if (this.chargeProgress >= this.chargeMax) {
+                return this.shoot();
+            }
+        }
+        return null;
+    }
+
+    drawChargeIndicator(ctx) {
+        if (this.charging) {
+            const alpha = this.chargeProgress / this.chargeMax;
+            ctx.fillStyle = `rgba(255, 70, 40, ${alpha})`;
+            ctx.fillRect(0, this.y, this.x, this.height);
+
+            /*Alternative with Image 
+            ctx.globalAlpha = alpha;
+            ctx.drawImage(this.loadingBarImg, 0, this.y, this.x, this.height);
+            ctx.globalAlpha = 1.0;
+            */
+        }
+    }
+
+    draw(ctx) {
+        if (this.visible === true) {
+            ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+            this.drawChargeIndicator(ctx);
+        }
     }
 }

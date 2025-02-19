@@ -1,12 +1,13 @@
 import { Gameobject } from "./gameObject.js";
 
 export class Shot extends Gameobject {
-    constructor(x, y, width, height, imgSrc) {
+    constructor(x, y, width, height, imgSrc, speed) {
         super(x, y, width, height, imgSrc);
+        this.speed = speed;
     }
 
-    move(speed) {
-        this.x += speed;
+    move() {
+        this.x += this.speed;
     }
 }
 
