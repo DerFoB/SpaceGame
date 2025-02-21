@@ -33,9 +33,9 @@ export class FastUfo extends Enemy {
 
 export class Boss extends Enemy {
     constructor(canvas, nrOfCanons) {
-        const canonWidth = 100;
+        const canonWidth = 80;
         const canonHeight = 40;
-        super(canvas.width + 2/3*canonWidth, 0, 80, canvas.height, 'img/enemies/BossTemp.png', 20, 0.5);
+        super(canvas.width + 2/3*canonWidth, 0, 80, canvas.height, 'img/enemies/boss.png', 20, 0.5);
         this.canons = []
         for (let i = 1; i <= nrOfCanons; i++) {
             let canvasOffset = 100 // so canons are better spread
@@ -43,7 +43,8 @@ export class Boss extends Enemy {
             this.canons.push(new Canon(canvas.width, canonY, canonWidth, canonHeight, this.speed));
             
         }
-        this.homingCanon = new HomingCanon(canvas.width + 40, canvas.height/2 - canonHeight/2, canonWidth, canonHeight, this.speed);
+        this.homingCanon = new HomingCanon(canvas.width + 40, canvas.height/2 - canonHeight/2, 
+            canonWidth, canonHeight, this.speed);
         this.canonWidth = canonWidth;
         this.canonHeight = canonHeight;
     }
@@ -78,10 +79,10 @@ export class Boss extends Enemy {
 
 class Canon extends Gameobject {
     constructor(x, y, width, height, speed) {
-        super(x, y, width, height, 'img/enemies/BossCanonTemp.png');
+        super(x, y, width, height, 'img/enemies/rapidcanon.png');
         this.speed = speed;
         this.lastShotTime = Date.now();
-        this.shotCooldown = 600;
+        this.shotCooldown = 1000;
     }
 
     move() {
@@ -89,13 +90,14 @@ class Canon extends Gameobject {
     }
 
     shoot() {
-        return new Shot(this.x, this.y, this.width/2, this.height, '../../img/laser.png', -20);
+        return new Shot(this.x, this.y, this.width*1.2 , this.height, 
+            '../../img/shots/enemylaser.png', -20);
     }
 }
 
 class HomingCanon extends Gameobject {
     constructor(x, y, width, height, speed) {
-        super(x, y, width, height, 'img/enemies/BossCanonTemp.png');
+        super(x, y, width, height, 'img/enemies/homingcanon.png');
         this.speed = speed;
         this.shooting = false;
         this.charging = false;
@@ -103,8 +105,6 @@ class HomingCanon extends Gameobject {
         this.chargeMax = 50;
         this.reloadCooldown = 2500;
         this.lastShotTime = Date.now();
-        this.chargeIndicatorImg = new Image();
-        this.chargeIndicatorImg.src = 'img/enemies/BossTemp.png';
     }
 
     move() {
@@ -128,7 +128,8 @@ class HomingCanon extends Gameobject {
                     this.charging = false;
                     this.chargeProgress = 0;
                     this.lastShotTime = Date.now();
-                    return new Shot(this.x, this.y, this.width/2, this.height, '../../img/laser.png', -30);
+                    return new Shot(this.x, this.y, this.width/1.1, this.height, 
+                        '../../img/shots/enemylaser.png', -40);
             }
         }
         return null;
@@ -137,8 +138,8 @@ class HomingCanon extends Gameobject {
     drawChargeIndicator(ctx) {
         if (this.charging) {
             const alpha = this.chargeProgress / this.chargeMax;
-            ctx.fillStyle = `rgba(255, 70, 40, ${alpha})`;
-            ctx.fillRect(0, this.y, this.x, this.height);
+            ctx.fillStyle = `rgba(255, 130, 150, ${alpha})`;
+            ctx.fillRect(0, this.y, this.x+20, this.height);
 
             /*Alternative with Image 
             ctx.globalAlpha = alpha;

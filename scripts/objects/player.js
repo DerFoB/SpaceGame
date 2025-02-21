@@ -27,7 +27,7 @@ export class Rocket extends Gameobject{
     }
 
     shoot() {
-        return new Shot(this.x + this.width, this.y + this.height/4, 40, 20, '../../img/laser.png', 15);
+        return new Shot(this.x + this.width, this.y + this.height/4, 40, 20, '../../img/shots/laser.png', 15);
     }
 
     explode() {
