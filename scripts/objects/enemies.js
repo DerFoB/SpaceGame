@@ -63,12 +63,25 @@ export class Boss extends Enemy {
         }); 
         this.homingCanon.move();
     }
+
+    rapidfire(){
+        let shots = [];
+        for (let canon of this.canons) {
+            if (Date.now() - canon.lastShotTime >= canon.shotCooldown) {
+                canon.lastShotTime = Date.now();
+                shots.push(canon.shoot());
+            }
+        }
+        return shots.length > 0 ? shots : null;
+    }
 }
 
 class Canon extends Gameobject {
     constructor(x, y, width, height, speed) {
         super(x, y, width, height, 'img/enemies/BossCanonTemp.png');
         this.speed = speed;
+        this.lastShotTime = Date.now();
+        this.shotCooldown = 600;
     }
 
     move() {
@@ -76,7 +89,7 @@ class Canon extends Gameobject {
     }
 
     shoot() {
-        return new Shot(this.x, this.y + this.height/2, 40, 20, '../../img/laser.png');
+        return new Shot(this.x, this.y, this.width/2, this.height, '../../img/laser.png', -20);
     }
 }
 
@@ -106,21 +119,16 @@ class HomingCanon extends Gameobject {
     }
 
     shoot() {
-        if (this.charging && this.chargeProgress >= this.chargeMax) {
-            this.charging = false;
-            this.chargeProgress = 0;
-            this.lastShotTime = Date.now();
-            return new Shot(this.x, this.y + this.height / 2, this.width/2, this.height, '../../img/laser.png', -30);
-        }
-        return null;
-    }
-
-    chargeAndStop() {
         if (Date.now() - this.lastShotTime >= this.reloadCooldown) {
             this.charging = true;
             this.chargeProgress++;
-            if (this.chargeProgress >= this.chargeMax) {
-                return this.shoot();
+            if (this.chargeProgress >= this.chargeMax && 
+                this.charging && 
+                this.chargeProgress >= this.chargeMax) {
+                    this.charging = false;
+                    this.chargeProgress = 0;
+                    this.lastShotTime = Date.now();
+                    return new Shot(this.x, this.y, this.width/2, this.height, '../../img/laser.png', -30);
             }
         }
         return null;

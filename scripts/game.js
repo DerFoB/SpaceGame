@@ -193,15 +193,19 @@ function update(){
         shot.move();
     });
     bosses.forEach(function(boss) { // + boss logic
-        if (boss.x > canvas.width - boss.width) {
+        if(boss.x > canvas.width - boss.width) {
             boss.move();
         }
 
         boss.homingCanon.aim(rocket.y, 0.05)
 
-        const shot = boss.homingCanon.chargeAndStop();
-        if (shot) {
-            enemyShots.push(shot);
+        const homingShot = boss.homingCanon.shoot();
+        if(homingShot) {
+            enemyShots.push(homingShot);
+        }
+        const rapidShot = boss.rapidfire();
+        if(rapidShot){
+            enemyShots.push(...rapidShot);
         }
     });
     enemyShots.forEach(function(enemyShot){
