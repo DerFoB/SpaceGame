@@ -32,7 +32,7 @@ export class FastUfo extends Enemy {
 }
 
 export class Boss extends Enemy {
-    constructor(canvas, nrOfCanons) {
+    constructor(canvas, nrOfCanons, hp) {
         const canonWidth = 80;
         const canonHeight = 40;
         super(canvas.width + 2/3*canonWidth, 0, 80, canvas.height, 'img/enemies/boss.png', 20, 0.5);
@@ -47,6 +47,7 @@ export class Boss extends Enemy {
             canonWidth, canonHeight, this.speed);
         this.canonWidth = canonWidth;
         this.canonHeight = canonHeight;
+        this.hp = hp;
     }
 
     draw(ctx){
@@ -74,6 +75,28 @@ export class Boss extends Enemy {
             }
         }
         return shots.length > 0 ? shots : null;
+    }
+
+    hit(){
+        this.hp--;
+        this.img.src = 'img/enemies/bossHit.png'
+        setTimeout(() => {
+            this.img.src = 'img/enemies/boss.png';
+        }, 100);
+    }
+
+    explode(nrOfExplosions){
+        let explosions = [];
+
+        for (let i = 0; i < nrOfExplosions; i++) {
+            explosions.push(new Explosion(this.x-10, 
+                                            i * this.height / nrOfExplosions, 
+                                            this.width, 
+                                            this.height / nrOfExplosions, 
+                                            '../../img/explosion.png'));
+        }
+
+        return explosions;
     }
 }
 

@@ -14,14 +14,20 @@ const ufoSpeedChange = 0.2;
 let ufoSpawnRate = 5000;
 const minSpawnRate = 1000;
 
-const maxShots = 6;
+const maxShots = 12;
 const reloadTime = 2000;
  
 const explosionLifetime = 150;
 
+const bossCooldown = 300;
+
 /// Initializes
 let score = 0;
 let gameRunning = true;
+
+let bossActive = false;
+let bossCount = 1;
+let lastBossTime = Date.now();
 
 let ammoCount;
 let canvas;
@@ -54,7 +60,6 @@ function startGame(){
 
     updateInterval = setInterval(update, 1000/25);
     spawnUfos();
-    bosses.push(new Boss(canvas, 2));
     collisionInterval = setInterval(checkCollision, 1000/25);
     draw();
 }
@@ -99,15 +104,34 @@ function checkCollision(){
         rocketShots.forEach(function(shot){   // Collision Shot -> Ufo
             if(collision(ufo, shot)){
                 explosions.push(ufo.explode());
+                score += ufo.points;
 
                 rocketShots = deleteObjectFromArray(rocketShots, shot)
                 ufos = deleteObjectFromArray(ufos, ufo);
 
-                score += ufo.points;
                 ufoSpeed += ufoSpeedChange;
-            }
-            if(shot.x > canvas.width){
+            }           
+        });
+    });
+
+    rocketShots.forEach(function(shot){   // Collision Shot -> Ufo
+        if(shot.x > canvas.width){
+            rocketShots = deleteObjectFromArray(rocketShots, shot);
+        }
+
+        bosses.forEach(function(boss){
+            if(collision(shot, boss)){
+                boss.hit();
                 rocketShots = deleteObjectFromArray(rocketShots, shot);
+
+                if(boss.hp <= 0){
+                    explosions.push(...boss.explode(7));
+                    score += boss.points;
+
+                    bosses = deleteObjectFromArray(bosses, boss);
+                    bossActive = false;
+                    bossCount++;
+                }
             }
         });
     });
@@ -151,7 +175,9 @@ function spawnUfos(){
         nextSpawn = Math.random() * 1000 + ufoSpawnRate;
     }
     
-    setTimeout(spawnUfos, nextSpawn); 
+    if(!bossActive){
+        setTimeout(spawnUfos, nextSpawn); 
+    }
 }
 
 
@@ -212,6 +238,11 @@ function update(){
         enemyShot.move();
     });
 
+    if(currentTime - lastBossTime >= bossCooldown && !bossActive){
+        bossActive = true;
+        bosses.push(new Boss(canvas, Math.min(bossCount, 5), 1));
+    }
+
     // delete explosion after lifetime
     explosions.forEach(function(explosion){
         if(currentTime > explosion.initTime + explosionLifetime){
@@ -221,8 +252,7 @@ function update(){
 }
 
 const hudMargin = 30;
-const ammoInnerPadding = 5;
-const ammoSize = 20;
+const ammoSize = {width: 10, height: 20, padding: 5};
 
 function draw(){ // redraw Canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -265,21 +295,21 @@ function draw(){ // redraw Canvas
 
     // Ammo
     for (let i = 0; i < ammoCount; i++) {
-        ctx.fillRect(hudMargin + i*(ammoInnerPadding + ammoSize), 
-            canvas.height - hudMargin - ammoSize, 
-            ammoSize, ammoSize); 
+        ctx.fillRect(hudMargin + i*(ammoSize.padding + ammoSize.width), 
+            canvas.height - hudMargin - ammoSize.height, 
+            ammoSize.width, ammoSize.height); 
     }
-    ctx.rect(hudMargin - ammoInnerPadding,
-        canvas.height - hudMargin - ammoSize - ammoInnerPadding, 
-        maxShots * ammoSize + (maxShots+1) * ammoInnerPadding, 
-        ammoSize + 2*ammoInnerPadding);
+    ctx.rect(hudMargin - ammoSize.padding,
+        canvas.height - hudMargin - ammoSize.height - ammoSize.padding, 
+        maxShots * ammoSize.width + (maxShots+1) * ammoSize.padding, 
+        ammoSize.height + 2*ammoSize.padding);
 
     // Reload
     let percentageReloadtimer = Math.min(1 ,(Date.now()-rocket.lastShotTime)/reloadTime); 
-    ctx.fillRect(hudMargin - ammoInnerPadding, 
-        canvas.height - hudMargin - ammoSize - 3*ammoInnerPadding, 
-        percentageReloadtimer * (maxShots * ammoSize + (maxShots+1) * ammoInnerPadding), 
-        ammoInnerPadding); 
+    ctx.fillRect(hudMargin - ammoSize.padding, 
+        canvas.height - hudMargin - ammoSize.height - 3*ammoSize.padding, 
+        percentageReloadtimer * (maxShots * ammoSize.width + (maxShots+1) * ammoSize.padding), 
+        ammoSize.padding); 
 
     ctx.stroke();
 
