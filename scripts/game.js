@@ -269,11 +269,11 @@ function draw(){ // redraw Canvas
     explosions.forEach(function(explosion){
         explosion.draw(ctx);
     })
-    bosses.forEach(function(boss){
-        boss.draw(ctx);
-    })
     enemyShots.forEach(function(enemyShot){
         enemyShot.draw(ctx);
+    })
+    bosses.forEach(function(boss){
+        boss.draw(ctx);
     })
 
     /// HUD
@@ -309,10 +309,20 @@ function draw(){ // redraw Canvas
     ctx.fillRect(hudMargin - ammoSize.padding, 
         canvas.height - hudMargin - ammoSize.height - 3*ammoSize.padding, 
         percentageReloadtimer * (maxShots * ammoSize.width + (maxShots+1) * ammoSize.padding), 
-        ammoSize.padding); 
+        ammoSize.padding);
 
     ctx.stroke();
 
+
+    // Boss Bar
+    if (bossActive) {
+        ctx.textAlign = "center";
+        ctx.fillText("Boss", canvas.width/2, hudMargin);
+        ctx.textAlign = "left";
+        
+    }
+
+    
     drawFrame = requestAnimationFrame(draw);
 }
 

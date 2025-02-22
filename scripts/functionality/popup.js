@@ -1,3 +1,5 @@
+import { keyState } from "./inputHandler.js";
+
 export function endGamePopup(score){
     setTimeout(() => {
             let highscorePlayer;
@@ -60,4 +62,11 @@ function showRestartPopup(message) {
         modal.style.display = "none";
         location.reload();
     };
+
+    document.addEventListener("keydown", function restartOnSpace(event) {
+        if (event.code === "Space") {
+            document.removeEventListener("keydown", restartOnSpace); // Event nur einmal nutzen
+            location.reload();
+        }
+    });
 }
