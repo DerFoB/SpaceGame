@@ -19,7 +19,7 @@ const reloadTime = 2000;
  
 const explosionLifetime = 150;
 
-const bossCooldown = 300;
+const bossCooldown = 120000;
 
 /// Initializes
 let score = 0;
@@ -129,6 +129,8 @@ function checkCollision(){
                     score += boss.points;
 
                     bosses = deleteObjectFromArray(bosses, boss);
+                    
+                    lastBossTime = Date.now();
                     bossActive = false;
                     bossCount++;
                 }
@@ -240,7 +242,7 @@ function update(){
 
     if(currentTime - lastBossTime >= bossCooldown && !bossActive){
         bossActive = true;
-        bosses.push(new Boss(canvas, Math.min(bossCount, 5), 1));
+        bosses.push(new Boss(canvas, Math.min(bossCount, 5), 10, "Spacemo"));
     }
 
     // delete explosion after lifetime
@@ -253,6 +255,7 @@ function update(){
 
 const hudMargin = 30;
 const ammoSize = {width: 10, height: 20, padding: 5};
+const bossBar = {width: 1/3*document.getElementById('gameCanvas').width, height: 20, padding: 3};
 
 function draw(){ // redraw Canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -276,14 +279,15 @@ function draw(){ // redraw Canvas
         boss.draw(ctx);
     })
 
-    /// HUD
+    //// HUD
     ctx.fillStyle = "white";
     ctx.font = "20px Arial";
-
-    // Score
+    ctx.textAlign = "left";
+    
+    /// Score
     ctx.fillText(`Score: ${score}`, canvas.width - 120, hudMargin);
 
-    // Lives
+    /// Lives
     let livesTxt = 'Lives: ';
     for (let i = 0; i < lives; i++) {
         livesTxt += '🤍';
@@ -293,35 +297,57 @@ function draw(){ // redraw Canvas
     ctx.beginPath();
     ctx.strokeStyle = "white";
 
-    // Ammo
+    /// Ammo
+    // munition
     for (let i = 0; i < ammoCount; i++) {
         ctx.fillRect(hudMargin + i*(ammoSize.padding + ammoSize.width), 
             canvas.height - hudMargin - ammoSize.height, 
             ammoSize.width, ammoSize.height); 
     }
+    // boarder
     ctx.rect(hudMargin - ammoSize.padding,
         canvas.height - hudMargin - ammoSize.height - ammoSize.padding, 
         maxShots * ammoSize.width + (maxShots+1) * ammoSize.padding, 
-        ammoSize.height + 2*ammoSize.padding);
-
-    // Reload
+        ammoSize.height + 2*ammoSize.padding
+    );
+    // reload bar
     let percentageReloadtimer = Math.min(1 ,(Date.now()-rocket.lastShotTime)/reloadTime); 
     ctx.fillRect(hudMargin - ammoSize.padding, 
         canvas.height - hudMargin - ammoSize.height - 3*ammoSize.padding, 
         percentageReloadtimer * (maxShots * ammoSize.width + (maxShots+1) * ammoSize.padding), 
-        ammoSize.padding);
+        ammoSize.padding
+    );
 
     ctx.stroke();
 
 
-    // Boss Bar
+    /// Boss Bar
     if (bossActive) {
         ctx.textAlign = "center";
-        ctx.fillText("Boss", canvas.width/2, hudMargin);
-        ctx.textAlign = "left";
-        
-    }
+        ctx.fillStyle = "darkred";
+        ctx.font = "bold 30px Arial";
+        // Boss Text
+        ctx.fillText(bosses[0].name, canvas.width/2, 1.5*hudMargin);
 
+        ctx.beginPath();
+        ctx.strokeStyle = "darkred";
+
+        // border
+        ctx.rect(bossBar.width - bossBar.padding,
+            1.5*hudMargin + 2*bossBar.padding,
+            bossBar.width + 2*bossBar.padding,
+            bossBar.height + 2*bossBar.padding
+        );
+        // hp bar
+        let percentageBossHP = Math.min(1 ,bosses[0].hp/bosses[0].maxHP);
+        ctx.fillRect(bossBar.width,
+            1.5*hudMargin + 3*bossBar.padding,
+            percentageBossHP * bossBar.width,
+            bossBar.height
+        );
+
+        ctx.stroke();
+    }
     
     drawFrame = requestAnimationFrame(draw);
 }

@@ -32,7 +32,7 @@ export class FastUfo extends Enemy {
 }
 
 export class Boss extends Enemy {
-    constructor(canvas, nrOfCanons, hp) {
+    constructor(canvas, nrOfCanons, hp, name) {
         const canonWidth = 80;
         const canonHeight = 40;
         super(canvas.width + 2/3*canonWidth, 0, 80, canvas.height, 'img/enemies/boss.png', 20, 0.5);
@@ -48,6 +48,8 @@ export class Boss extends Enemy {
         this.canonWidth = canonWidth;
         this.canonHeight = canonHeight;
         this.hp = hp;
+        this.maxHP = hp;
+        this.name = name;
     }
 
     draw(ctx){
