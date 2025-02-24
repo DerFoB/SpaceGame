@@ -3,11 +3,12 @@ import { Shot } from "./shots.js";
 import { Explosion } from "./explosion.js";
 
 export class Rocket extends Gameobject{
-    constructor(x, y, width, height, imgSrc, speed) {
+    constructor(x, y, width, height, imgSrc, speed, hp) {
         super(x, y, width, height, imgSrc);
         this.speed = speed;
         this.shotCooldown = 300;
         this.lastShotTime = 0;
+        this.hp = hp;
     }
 
     moveUp() {

@@ -4,6 +4,7 @@ import { Rocket } from './objects/player.js';
 import { keyState } from './functionality/inputHandler.js';
 import { collision, deleteObjectFromArray } from './functionality/eventHandler.js';
 import { endGamePopup } from './functionality/popup.js';
+import { MediKit } from './objects/powerup.js';
 
 /// Settings 
 const rocketSpeed = 12;
@@ -34,6 +35,7 @@ let canvas;
 let ctx;
 let updateInterval;
 let collisionInterval;
+let powerupInterval;
 let drawFrame; 
 
 let ufos = [];
@@ -41,6 +43,7 @@ let rocketShots = [];
 let enemyShots = [];
 let explosions = [];
 let bosses = [];
+let powerups = [];
 let rocket;
 let background;
 
@@ -55,15 +58,18 @@ function startGame(){
         'img/background/spaceBackgroundBaseLayer.png', 
         'img/background/spaceBackgroundMiddleLayer.png', 
         'img/background/spaceBackgroundFrontLayer.png');
-    rocket = new Rocket(40, canvas.height/2-25, 100, 45, 'img/rocket/rocket.png', rocketSpeed);
+    rocket = new Rocket(40, canvas.height/2-25, 100, 45, 'img/rocket/rocket.png', rocketSpeed, lives);
     ammoCount = maxShots;
 
     updateInterval = setInterval(update, 1000/25);
     setTimeout(() => {
         spawnUfos();
     }, 4000);
+
+    powerupInterval = setInterval(spawnPowerUp, 10000);
     
     collisionInterval = setInterval(checkCollision, 1000/25);
+
     draw();
 }
 
@@ -73,11 +79,18 @@ function endGame(){
         window.cancelAnimationFrame(drawFrame); // stop drawing
         clearInterval(updateInterval);
         clearInterval(collisionInterval);
+        clearInterval(powerupInterval);
     }, 50);
 
     endGamePopup(score);
 }
-    
+
+function spawnPowerUp(){
+    if (Math.random() < 0.09) {  
+        powerups.push(new MediKit((Math.random() * (0.8 - 0.5) + 0.5) * canvas.width,
+                                0, 30, 30, 2));
+    }
+}
 
 
 /// Collision
@@ -95,8 +108,8 @@ function checkCollision(){
             ufos = deleteObjectFromArray(ufos, ufo);
 
             if(gameRunning === true){
-                lives--;
-                if(lives < 1){
+                rocket.hp--;
+                if(rocket.hp < 1){
                     explosions.push(rocket.explode());
                     
                     endGame();
@@ -143,6 +156,15 @@ function checkCollision(){
                 }
             }
         });
+
+        powerups.forEach(function(powerup){
+            if(collision(shot, powerup)){
+                powerup.activate(rocket, lives);
+
+                rocketShots = deleteObjectFromArray(rocketShots, shot);
+                powerups = deleteObjectFromArray(powerups, powerup);
+            }
+        })
     });
 
     enemyShots.forEach(function(enemyShot){ // Collision EnemyShots -> Rocket
@@ -250,10 +272,13 @@ function update(){
     enemyShots.forEach(function(enemyShot){
         enemyShot.move();
     });
+    powerups.forEach(function(powerup){
+        powerup.move();
+    });
 
     if(currentTime - lastBossTime >= bossCooldown && !bossActive){
         bossActive = true;
-        bosses.push(new Boss(canvas, Math.min(bossCount, 5), 10, "Spacemo"));
+        bosses.push(new Boss(canvas, Math.min(bossCount, 5), bossCount*10, "Spacemo"));
     }
 
     // delete explosion after lifetime
@@ -286,6 +311,9 @@ function draw(){ // redraw Canvas
     enemyShots.forEach(function(enemyShot){
         enemyShot.draw(ctx);
     })
+    powerups.forEach(function(powerup){
+        powerup.draw(ctx);
+    })
     bosses.forEach(function(boss){
         boss.draw(ctx);
     })
@@ -300,7 +328,7 @@ function draw(){ // redraw Canvas
 
     /// Lives
     let livesTxt = 'Lives: ';
-    for (let i = 0; i < lives; i++) {
+    for (let i = 0; i < rocket.hp; i++) {
         livesTxt += '🤍';
     }
     ctx.fillText(livesTxt, hudMargin, hudMargin);
