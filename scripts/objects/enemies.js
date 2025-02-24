@@ -107,7 +107,7 @@ class Canon extends Gameobject {
         super(x, y, width, height, 'img/enemies/rapidcanon.png');
         this.speed = speed;
         this.lastShotTime = Date.now();
-        this.shotCooldown = 1000;
+        this.shotCooldown = 1500;
     }
 
     move() {
@@ -116,7 +116,7 @@ class Canon extends Gameobject {
 
     shoot() {
         return new Shot(this.x, this.y, this.width*1.2 , this.height, 
-            '../../img/shots/enemylaser.png', -20);
+            '../../img/shots/enemylaser.png', -15);
     }
 }
 

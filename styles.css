@@ -22,7 +22,7 @@ body {
 .instructions {
     max-width: 350px;
     background: rgba(255, 255, 255, 0.1);
-    padding: 0px 15px 5px 20px;
+    padding: 1px 15px 5px 20px;
     border-radius: 10px;
 }
 
@@ -89,4 +89,33 @@ td {
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(1.5px);
     z-index: 998;
+}
+
+.start-button {
+    background-color: #299242;
+    color: white;
+    font-size: 2em;
+    font-weight: bold;
+    padding: 20px 40px;
+    text-decoration: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.40);
+
+}
+.start-button:hover {
+    background-color: #29c04c;
+}
+.start-button:active {
+    background-color: #299242;
+    transform: translateY(2px);
+  }
+
+.start-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(49, 49, 49, 0.8);
+    width: 720px;
+    height: 480px;
+    border-radius: 5px;
 }

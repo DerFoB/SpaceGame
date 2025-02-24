@@ -10,8 +10,8 @@ const rocketSpeed = 12;
 let lives = 5;
 
 let ufoSpeed = 5;
-const ufoSpeedChange = 0.2;
-let ufoSpawnRate = 5000;
+const ufoSpeedChange = 0.1;
+let ufoSpawnRate = 4000;
 const minSpawnRate = 1000;
 
 const maxShots = 12;
@@ -19,7 +19,7 @@ const reloadTime = 2000;
  
 const explosionLifetime = 150;
 
-const bossCooldown = 120000;
+const bossCooldown = 60000;
 
 /// Initializes
 let score = 0;
@@ -59,7 +59,10 @@ function startGame(){
     ammoCount = maxShots;
 
     updateInterval = setInterval(update, 1000/25);
-    spawnUfos();
+    setTimeout(() => {
+        spawnUfos();
+    }, 4000);
+    
     collisionInterval = setInterval(checkCollision, 1000/25);
     draw();
 }
@@ -129,6 +132,10 @@ function checkCollision(){
                     score += boss.points;
 
                     bosses = deleteObjectFromArray(bosses, boss);
+
+                    setTimeout(() => {
+                        spawnUfos();
+                    }, 2000);
                     
                     lastBossTime = Date.now();
                     bossActive = false;
@@ -157,6 +164,10 @@ function checkCollision(){
 let ufoSpawnCount = 1;
 
 function spawnUfos(){
+    if (bossActive) {
+        return;
+    }
+
     const randomHeight = Math.random() * (canvas.height - 50) + 5;
 
     if(ufoSpawnCount % 5 === 0){
