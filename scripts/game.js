@@ -58,7 +58,8 @@ function startGame(){
         'img/background/spaceBackgroundBaseLayer.png', 
         'img/background/spaceBackgroundMiddleLayer.png', 
         'img/background/spaceBackgroundFrontLayer.png');
-    rocket = new Rocket(40, canvas.height/2-25, 100, 45, 'img/rocket/rocket.png', rocketSpeed, lives);
+    rocket = new Rocket(40, canvas.height/2-25, 100, 45, 
+        'img/rocket/rocket.png', rocketSpeed, lives, reloadTime);
     ammoCount = maxShots;
 
     updateInterval = setInterval(update, 1000/25);
@@ -242,7 +243,7 @@ function update(){
     }
 
     // reload ammo
-    if (currentTime - rocket.lastShotTime >= reloadTime){
+    if (currentTime - rocket.lastShotTime >= rocket.reloadTime){
         ammoCount = maxShots;
     }
 
@@ -350,7 +351,7 @@ function draw(){ // redraw Canvas
         ammoSize.height + 2*ammoSize.padding
     );
     // reload bar
-    let percentageReloadtimer = Math.min(1 ,(Date.now()-rocket.lastShotTime)/reloadTime); 
+    let percentageReloadtimer = Math.min(1 ,(Date.now()-rocket.lastShotTime)/rocket.reloadTime); 
     ctx.fillRect(hudMargin - ammoSize.padding, 
         canvas.height - hudMargin - ammoSize.height - 3*ammoSize.padding, 
         percentageReloadtimer * (maxShots * ammoSize.width + (maxShots+1) * ammoSize.padding), 
