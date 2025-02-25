@@ -298,7 +298,8 @@ function update(){
     });
 }
 
-const hudMargin = 30;
+const hudMargin = 20;
+const hpDisplay = {width: 20, height: 20, padding: 5};
 const ammoSize = {width: 10, height: 20, padding: 5};
 const bossBar = {width: 1/3*document.getElementById('gameCanvas').width, height: 20, padding: 3};
 
@@ -331,22 +332,31 @@ function draw(){ // redraw Canvas
     ctx.fillStyle = "white";
     ctx.font = "20px Arial";
     ctx.textAlign = "left";
+    ctx.textBaseline = "top";
     
     /// Score
     ctx.fillText(`Score: ${score}`, canvas.width - 120, hudMargin);
 
     /// Lives
-    let livesTxt = 'Lives: ';
-    for (let i = 0; i < rocket.hp; i++) {
-        livesTxt += '🤍';
+    for (let i = 0; i < lives; i++) {
+        let hpImage = new Image();
+        if(i < rocket.hp){
+            hpImage.src = 'img/hud/heart.png';
+        } else {
+            hpImage.src = 'img/hud/heartempty.png';
+        }
+        ctx.drawImage(hpImage, 
+            hudMargin + i*(hpDisplay.width + hpDisplay.padding), 
+            hudMargin, 
+            hpDisplay.width, 
+            hpDisplay.height);
     }
-    ctx.fillText(livesTxt, hudMargin, hudMargin);
-    
-    ctx.beginPath();
-    ctx.strokeStyle = "white";
 
     /// Ammo
     // munition
+    ctx.beginPath();
+    ctx.strokeStyle = "white";
+
     for (let i = 0; i < ammoCount; i++) {
         ctx.fillRect(hudMargin + i*(ammoSize.padding + ammoSize.width), 
             canvas.height - hudMargin - ammoSize.height, 
@@ -372,24 +382,29 @@ function draw(){ // redraw Canvas
     /// Boss Bar
     if (bossActive) {
         ctx.textAlign = "center";
+        ctx.textBaseline = "bottom";
         ctx.fillStyle = "darkred";
         ctx.font = "bold 30px Arial";
+
+        const topMarginBossbar = 2.5 * hudMargin;
+        const gapTextBar = 2*bossBar.padding;
+
         // Boss Text
-        ctx.fillText(bosses[0].name, canvas.width/2, 1.5*hudMargin);
+        ctx.fillText(bosses[0].name, canvas.width/2, topMarginBossbar);
 
         ctx.beginPath();
         ctx.strokeStyle = "darkred";
 
         // border
         ctx.rect(bossBar.width - bossBar.padding,
-            1.5*hudMargin + 2*bossBar.padding,
+            topMarginBossbar + gapTextBar,
             bossBar.width + 2*bossBar.padding,
             bossBar.height + 2*bossBar.padding
         );
         // hp bar
         let percentageBossHP = Math.min(1 ,bosses[0].hp/bosses[0].maxHP);
         ctx.fillRect(bossBar.width,
-            1.5*hudMargin + 3*bossBar.padding,
+            topMarginBossbar + gapTextBar + bossBar.padding,
             percentageBossHP * bossBar.width,
             bossBar.height
         );
