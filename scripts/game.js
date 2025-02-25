@@ -88,7 +88,7 @@ function endGame(){
 
 function spawnPowerUp(){
     if (Math.random() < 0.09) {  
-        powerups.push(new MediKit((Math.random() * (0.8 - 0.5) + 0.5) * canvas.width,
+        powerups.push(new MediKit((Math.random() * (0.7 - 0.25) + 0.25) * canvas.width,
                                 0, 30, 30, 2));
     }
 }
@@ -166,6 +166,14 @@ function checkCollision(){
                 powerups = deleteObjectFromArray(powerups, powerup);
             }
         })
+    });
+
+    powerups.forEach(function(powerup){
+        if(collision(rocket, powerup)){
+            powerup.activate(rocket, lives);
+
+            powerups = deleteObjectFromArray(powerups, powerup);
+        }
     });
 
     enemyShots.forEach(function(enemyShot){ // Collision EnemyShots -> Rocket
